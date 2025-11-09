@@ -64,3 +64,77 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+----------------------- LANGKAH-LANGKAH INSTALASI PROJECT -----------------------
+
+# Read Rate
+
+Read Rate adalah backend test project menggunakan **Laravel 10** dan **PHP 8.2**.  
+Tujuan proyek ini adalah membuat REST API untuk sistem manajemen buku di bookstore John Doe, termasuk:
+
+- List buku dengan filter dan sorting
+- Top 20 most famous authors
+- Input rating oleh user dengan aturan khusus
+- Dataset besar dioptimalkan tanpa caching
+
+Proyek ini menggunakan dataset besar:
+- 1000 authors
+- 3000 book categories
+- 100.000 books
+- 500.000 ratings
+
+---
+
+## Persyaratan Sistem
+
+Sebelum instalasi, pastikan sistem Anda memenuhi persyaratan berikut:
+
+- PHP >= 8.2
+- Laravel 10
+- Composer
+- Node.js & npm
+- MySQL
+- Git
+
+---
+
+## Instalasi & Setup
+
+Ikuti langkah-langkah berikut untuk menjalankan proyek:
+
+### 1. Clone repository
+```bash
+git clone https://github.com/LilPugaa/Read-Rate_Project.git
+cd read-rate
+
+### 2. Install dependencies
+composer install
+npm install
+
+### 3. Konfigurasi environment
+### 3.1 Copy .env.example menjadi .env:
+cp .env.example .env   # macOS/Linux
+copy .env.example .env # Windows
+### 3.2 Sesuaikan konfigurasi database di .env:
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=read_rate
+DB_USERNAME=root
+DB_PASSWORD=password
+
+###  4. Generate application key
+php artisan key:generate
+
+### 5. Migrasi & Seed database
+php artisan migrate
+php artisan db:seed
+NOTE: Seeder menggunakan Faker untuk populate dataset besar: 1000 authors, 3000 categories, 100.000 books, 500.000 ratings. Pastikan MySQL sudah siap dan konfigurasi .env benar.
+
+### 6. Compile assets (optional)
+npm run dev   # untuk development
+npm run build # untuk production
+
+### 7. Jalankan server
+php artisan serve
