@@ -13,12 +13,16 @@ class AuthorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $type = $request->get('type', 'popularity');
         // Langkah 1: ambil hanya 20 author dengan total rating terbanyak
         $topAuthors = Author::select('authors.id', 'authors.name')
             ->join('books', 'books.author_id', '=', 'authors.id')
             ->join('ratings', 'ratings.book_id', '=', 'books.id')
+            ->when($type === 'popularity', function ($query) {
+                $query->where('ratings.rating', '>', 5);
+            })
             ->groupBy('authors.id', 'authors.name')
             ->selectRaw('COUNT(ratings.id) as total_ratings')
             ->orderByDesc('total_ratings')
@@ -33,6 +37,7 @@ class AuthorController extends Controller
                 $allRatings = $author->books->flatMap->ratings;
 
                 $totalRatings = $allRatings->count();
+                $highRatings = $allRatings->where('rating', '>', 5)->count();
                 $averageRating = $allRatings->avg('rating') ?? 0;
 
                 // Cari best & worst book
@@ -62,16 +67,25 @@ class AuthorController extends Controller
                     'id' => $author->id,
                     'name' => $author->name,
                     'total_ratings' => $totalRatings,
+                    'high_ratings' => $highRatings,
                     'average_rating' => $averageRating,
                     'best_book' => $bestBook?->title,
                     'worst_book' => $worstBook?->title,
                     'trending_score' => $trendingScore,
                 ];
             })
-            ->sortByDesc('average_rating')
+            ->when($type === 'popularity', function ($authorsCollection) {
+                return $authorsCollection->sortByDesc('high_ratings');
+            })
+            ->when($type === 'rating', function ($authorsCollection) {
+                return $authorsCollection->sortByDesc('average_rating');
+            })
+            ->when($type === 'trending', function ($authorsCollection) {
+                return $authorsCollection->sortByDesc('trending_score');
+            })
             ->values();
 
-        return view('authors.top', compact('authors'));
+        return view('authors.top', compact('authors', 'type'));
     }
 
     /**
