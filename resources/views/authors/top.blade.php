@@ -40,7 +40,7 @@
                     <th>No</th>
                     <th>Author</th>
                     <th>Total Ratings</th>
-                    <th>High Ratings (>5)</th>
+                    <th>Popularity (>5)</th>
                     <th>Best Book</th>
                     <th>Worst Book</th>
                     <th>Average Rating</th>

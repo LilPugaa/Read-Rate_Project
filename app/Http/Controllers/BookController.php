@@ -121,7 +121,9 @@ class BookController extends Controller
         $categories = Category::all();
         $authors = Author::orderBy('name', 'asc')->get();
 
-        $books = $query->with(['author', 'categories', 'ratings'])->paginate(100);
+        $books = $query->with(['author', 'categories', 'ratings'])
+            ->paginate(100)
+            ->withQueryString(); // withQueryString() hanya error pada packagesnya, bukan error dari laravel.
 
         return view('index', compact('books', 'categories', 'authors', 'locations'));
     }

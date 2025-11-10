@@ -121,7 +121,7 @@
     </form>
     {{-- <pre>{{ print_r($books->first()->toArray()) }}</pre> --}}
     <table class="table table-striped">
-        <thead>
+        <thead class="text-center"> {{-- baru diupdate --}}
             <tr>
                 <th>No</th>
                 <th>Title</th>
@@ -140,7 +140,9 @@
         <tbody>
             @foreach ($books as $book)
             <tr>
-                <td>{{ $loop->iteration + ($books->currentPage() - 1) * $books->perPage() }}</td>
+                <td class="text-center"> {{-- baru diupdate --}}
+                    {{ $loop->iteration + ($books->currentPage() - 1) * $books->perPage() }}
+                </td>
                 <td>{{ $book->title }}</td>
                 <td>
                     @forelse ($book->categories as $category)

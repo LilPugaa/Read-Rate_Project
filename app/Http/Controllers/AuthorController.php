@@ -16,6 +16,7 @@ class AuthorController extends Controller
     public function index(Request $request)
     {
         $type = $request->get('type', 'popularity');
+        
         // Langkah 1: ambil hanya 20 author dengan total rating terbanyak
         $topAuthors = Author::select('authors.id', 'authors.name')
             ->join('books', 'books.author_id', '=', 'authors.id')
@@ -73,17 +74,18 @@ class AuthorController extends Controller
                     'worst_book' => $worstBook?->title,
                     'trending_score' => $trendingScore,
                 ];
-            })
-            ->when($type === 'popularity', function ($authorsCollection) {
-                return $authorsCollection->sortByDesc('high_ratings');
-            })
-            ->when($type === 'rating', function ($authorsCollection) {
-                return $authorsCollection->sortByDesc('average_rating');
-            })
-            ->when($type === 'trending', function ($authorsCollection) {
-                return $authorsCollection->sortByDesc('trending_score');
-            })
-            ->values();
+            });
+
+            // Urutkan sesuai tab yang dipilih
+            $authors = match ($type) {
+                'popularity' => $authors->sortByDesc('high_ratings'),
+                'rating' => $authors->sortByDesc('average_rating'),
+                'trending' => $authors->sortByDesc('trending_score'),
+                default => $authors->sortByDesc('total_ratings'),
+            };
+
+            // Ambil 20 terbaik dan reset index
+            $authors = $authors->take(20)->values();
 
         return view('authors.top', compact('authors', 'type'));
     }
